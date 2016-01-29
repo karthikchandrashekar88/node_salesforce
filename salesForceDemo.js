@@ -84,10 +84,24 @@ function createCustomObject(){
 //create custom field
 function customField(){
   var metadata = [{
-    fullName: 'codeGeass__c.lancelot__c',
-    label: 'Lancelot',
+    fullName: 'codeGeass__c.team__c',
+    label: 'team',
     type: 'Text',
     length: 80
+  },
+  {
+    fullName: 'codeGeass__c.knightmareCount__c',
+    label: 'knightframeCount',
+    type: 'Number',
+    precision: 3,
+    scale: 0
+  },
+  {
+    fullName: 'codeGeass__c.gynamadeCount__c',
+    label: 'gynamadeCount',
+    type: 'Number',
+    precision: 3,
+    scale: 0
   }];
   conn.metadata.create('CustomField', metadata, function(err, results) {
     console.log('trying to create custom field');
@@ -96,6 +110,36 @@ function customField(){
     }
     else{
       console.log('results after creating custom field :',results);
+      //creating an entry
+      conn.sobject("codeGeass__c").create([
+        {
+          Name : 'Jeremaiah'
+        },
+        {
+          Name : 'Snizel'
+        }
+      ],
+      function(err, rets) {
+        if (err) { return console.error(err); }
+        for (var i=0; i < rets.length; i++) {
+          if (rets[i].success) {
+            console.log("Created record id : " + rets[i].id);
+            //start update records
+            conn.sobject("codeGeass__c").update({
+              Name : 'obj'+i,
+              Id : rets[i].id,
+              team : 'team:'+i,
+              knightframeCount : i+50,
+              gynamadeCount : i+60
+            }, function(err, ret) {
+              if (err || !ret.success) { return console.error(err, ret); }
+                console.log('Updated Successfully : ' + ret.id);
+            });
+            //end update records
+          }
+        }
+      });
+      //end creating entry*/
     }
   });
 }
